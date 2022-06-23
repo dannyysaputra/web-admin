@@ -1,0 +1,101 @@
+[{
+    "id": 1,
+    "date": "1",
+    "target_time": "0",
+    "work_time": "0",
+    "achievement": "100",
+    "overtime": "3",
+    "day": "Sunday",
+    "created_at": "2022-06-21T07:44:12.000000Z",
+    "updated_at": "2022-06-21T07:44:12.000000Z"
+}, {
+    "id": 2,
+    "date": "2",
+    "target_time": "8",
+    "work_time": "8",
+    "achievement": "100",
+    "overtime": "3",
+    "day": "Monday",
+    "created_at": "2022-06-21T07:44:12.000000Z",
+    "updated_at": "2022-06-21T07:44:12.000000Z"
+}, {
+    "id": 3,
+    "date": "3",
+    "target_time": "8",
+    "work_time": "8",
+    "achievement": "100",
+    "overtime": "1",
+    "day": "Tuesday",
+    "created_at": "2022-06-21T07:44:12.000000Z",
+    "updated_at": "2022-06-21T07:44:12.000000Z"
+}, {
+    "id": 4,
+    "date": "4",
+    "target_time": "8",
+    "work_time": "4",
+    "achievement": "50",
+    "overtime": "2",
+    "day": "Wednesday",
+    "created_at": "2022-06-21T07:44:12.000000Z",
+    "updated_at": "2022-06-21T07:44:12.000000Z"
+}, {
+    "id": 5,
+    "date": "5",
+    "target_time": "8",
+    "work_time": "8",
+    "achievement": "100",
+    "overtime": "0",
+    "day": "Thursday",
+    "created_at": "2022-06-21T07:44:12.000000Z",
+    "updated_at": "2022-06-21T07:44:12.000000Z"
+}, {
+    "id": 6,
+    "date": "6",
+    "target_time": "8",
+    "work_time": "8",
+    "achievement": "100",
+    "overtime": "0",
+    "day": "Friday",
+    "created_at": "2022-06-21T07:44:12.000000Z",
+    "updated_at": "2022-06-21T07:44:12.000000Z"
+}, {
+    "id": 7,
+    "date": "7",
+    "target_time": "0",
+    "work_time": "0",
+    "achievement": "100",
+    "overtime": "4",
+    "day": "Saturday",
+    "created_at": "2022-06-21T07:44:12.000000Z",
+    "updated_at": "2022-06-21T07:44:12.000000Z"
+}, {
+    "id": 8,
+    "date": "8",
+    "target_time": "3",
+    "work_time": "4",
+    "achievement": "53",
+    "overtime": "2",
+    "day": "Sunday",
+    "created_at": "2022-06-21T07:44:12.000000Z",
+    "updated_at": "2022-06-21T07:44:12.000000Z"
+}, {
+    "id": 9,
+    "date": "9",
+    "target_time": "2",
+    "work_time": "5",
+    "achievement": "100",
+    "overtime": "0",
+    "day": "Monday",
+    "created_at": "2022-06-21T07:44:12.000000Z",
+    "updated_at": "2022-06-21T07:44:12.000000Z"
+}, {
+    "id": 10,
+    "date": "10",
+    "target_time": "2",
+    "work_time": "1",
+    "achievement": "78",
+    "overtime": "0",
+    "day": "Tuesday",
+    "created_at": "2022-06-21T07:44:12.000000Z",
+    "updated_at": "2022-06-21T07:44:12.000000Z"
+}]
