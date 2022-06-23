@@ -5,7 +5,13 @@ document.addEventListener('DOMContentLoaded', function () {
         alert('You have exited.');
     })
 
-    // change chart event
+    // date picker
+    var $select = $('.date');
+    for (i = 1; i <= 31; i++) {
+        $select.append($('<option></option>').val(i).html(i));
+    }
+
+    // change chart button
     $('#column-chart-btn').click(function() {
         $('#daily-column-chart').removeClass('d-none');
         $('#daily-pie-chart').addClass('d-none');
@@ -18,14 +24,36 @@ document.addEventListener('DOMContentLoaded', function () {
         $(this).addClass('active');
         $('#column-chart-btn').removeClass('active');
     })
+
+    // clear filter
+    $('#clear-daily-filter').click(function() {
+        const deleteFilterDailyTable = $('#daily-table').DataTable();
+        deleteFilterDailyTable.ajax.reload();
+    })
+    $('#clear-year-filter').click(function() {
+        const deleteFilterYearTable = $('#year-table').DataTable();
+        deleteFilterYearTable.ajax.reload();
+    })
     
     // daily data table
     const dailyTable = $('#daily-table');
     const dailyDataTable = dailyTable.DataTable({
-        fnInitComplete: function (oSettings, json) {
-            renderDailyColumnChart(json);
-            renderDailyPieChart(json);
-        },
+        // fnInitComplete: function (oSettings, json) {
+        //     // const selectDate = dailyTable.data('select');
+            
+        //     // const filterDailyDataTable = json.filter(data => {
+        //     //     return data.date == selectDate;
+        //     // });
+
+        //     // $('#clear-daily-filter').click(function() {
+        //     //     const deleteFilterDailyTable = $('#daily-table').DataTable();
+        //     //     deleteFilterDailyTable.ajax.reload();
+        //     // })
+
+        //     // dailyDataTable.clear();
+        //     // dailyDataTable.rows.add(filterDailyDataTable);
+        //     // dailyDataTable.draw();
+        // },
         pageLength: 5,
         lengthMenu: [5, 10, 15, 20],
         ajax: {
@@ -87,7 +115,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 point: {
                     events: {
                         click: function () {
-                            onClickSeries(this.id, 'year-table');
+                            onClickSeries(this.id, 'daily-table');
                         }
                     }
                 }
@@ -124,6 +152,9 @@ document.addEventListener('DOMContentLoaded', function () {
         json.credits = credits;
         $('#daily-column-chart').highcharts(json);
     }
+    setTimeout(() => {
+        renderDailyColumnChart(dailyDataTable.data());
+    }, 1000)
 
     // daily pie chart
     const renderDailyPieChart = async (d) => {
@@ -176,12 +207,9 @@ document.addEventListener('DOMContentLoaded', function () {
         json.plotOptions = plotOptions;
         $('#daily-pie-chart').highcharts(json);
     }
-
-    // date picker
-    var $select = $('.date');
-    for (i = 1; i <= 31; i++) {
-        $select.append($('<option></option>').val(i).html(i));
-    }
+    setTimeout(() => {
+        renderDailyPieChart(dailyDataTable.data());
+    }, 1000)
 
     // year data table
     const yearTable = $('#year-table');
@@ -190,12 +218,12 @@ document.addEventListener('DOMContentLoaded', function () {
             const startDate = yearTable.data('start');
             const endDate = yearTable.data('end');
 
-            const filterDataTable = json.filter(data => {
+            const filterYearDataTable = json.filter(data => {
                 return data.date >= startDate && data.date <= endDate;
             });
 
             yearDataTable.clear();
-            yearDataTable.rows.add(filterDataTable);
+            yearDataTable.rows.add(filterYearDataTable);
             yearDataTable.draw();
         },
         ajax: {

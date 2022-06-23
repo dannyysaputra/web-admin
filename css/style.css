@@ -23,9 +23,9 @@ button > p {
   text-align: center;
 }
 
-.grid {
+.grid-2 {
   display: grid;
-  grid-template-columns: 25rem 1fr 1fr;
+  grid-template-columns: 25rem 1fr fr;
   gap: 1rem;
 }
 
@@ -71,4 +71,11 @@ button > p {
     -webkit-transform: translateX(100%);
     transform: translateX(100%);
   }
+}
+
+footer {
+  bottom: 0;
+  width: 100%;
+  height: 80px;
+  background-color: brown;
 }
