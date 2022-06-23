@@ -1,14 +1,190 @@
 document.addEventListener('DOMContentLoaded', function () {
 
+    // modal exit
+    $('#yes-exit').click(function() {
+        alert('You have exited.');
+    })
+
+    // change chart event
+    $('#column-chart-btn').click(function() {
+        $('#daily-column-chart').removeClass('d-none');
+        $('#daily-pie-chart').addClass('d-none');
+        $(this).addClass('active');
+        $('#pie-chart-btn').removeClass('active');
+    })
+    $('#pie-chart-btn').click(function() {
+        $('#daily-pie-chart').removeClass('d-none');
+        $('#daily-column-chart').addClass('d-none');
+        $(this).addClass('active');
+        $('#column-chart-btn').removeClass('active');
+    })
+    
+    // daily data table
+    const dailyTable = $('#daily-table');
+    const dailyDataTable = dailyTable.DataTable({
+        fnInitComplete: function (oSettings, json) {
+            renderDailyColumnChart(json);
+            renderDailyPieChart(json);
+        },
+        pageLength: 5,
+        lengthMenu: [5, 10, 15, 20],
+        ajax: {
+            url: '/api/dailyperformances.json',
+            dataSrc: ''
+        },
+        columns: [{
+            data: 'date'
+        },
+        {
+            data: 'target_time'
+        },
+        {
+            data: 'work_time'
+        },
+        {
+            data: 'achievement'
+        },
+        {
+            data: 'overtime'
+        },
+        {
+            data: 'day'
+        }
+    ]
+    })
+
+    // daily column chart
+    const renderDailyColumnChart = async (d) => {
+        const data = await getDataFromJson(d);
+        var chart = {
+            type: 'column'
+        };
+        var title = {
+            text: 'Daily Summary of Target Time, Working Time Comparison with Overtime'
+        };
+        var xAxis = {
+            categories: data.categories,
+            crosshair: true
+        };
+        var yAxis = {
+            min: 0,
+            max: 24,
+            title: {
+                text: 'Time (hour)'
+            }
+        };
+        var tooltip = {
+            headerFormat: '<span style = "font-size:10px">{point.key}</span><table>',
+            pointFormat: '<tr><td style = "color:{series.color};padding:0">{series.name}: </td>' +
+                '<td style = "padding:0"><b>{point.y:.1f} hour</b></td></tr>',
+            footerFormat: '</table>',
+            shared: true,
+            useHTML: true
+        };
+        var plotOptions = {
+            series: {
+                cursor: 'pointer',
+                point: {
+                    events: {
+                        click: function () {
+                            onClickSeries(this.id, 'year-table');
+                        }
+                    }
+                }
+            },
+            coloumn: {
+                pointPadding: 0.2,
+                borderWidth: 0
+            }
+        };
+        var credits = {
+            enabled: false
+        };
+        var series = [{
+                name: 'Target Time',
+                data: data.targetTimes
+            },
+            {
+                name: 'Work Time',
+                data: data.workTimes
+            },
+            {
+                name: 'Overtime',
+                data: data.overTimes
+            }
+        ]
+        var json = {};
+        json.chart = chart;
+        json.title = title;
+        json.tooltip = tooltip;
+        json.xAxis = xAxis;
+        json.yAxis = yAxis;
+        json.series = series;
+        json.plotOptions = plotOptions;
+        json.credits = credits;
+        $('#daily-column-chart').highcharts(json);
+    }
+
+    // daily pie chart
+    const renderDailyPieChart = async (d) => {
+        const data = await getDataFromJson(d);
+        var chart = {
+            plotBackgroundColor: null,
+            plotBorderWidth: null,
+            plotShadow: false
+        };
+        var title = {
+            text: 'Daily Summary Achievement'
+        };
+        var tooltip = {
+            pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+        };
+        var plotOptions = {
+            pie: {
+                allowPointSelect: true,
+                cursor: 'pointer',
+                dataLabels: {
+                    enabled: true,
+                    format: '<b>{point.name}</b>: {point.percentage:.1f} %',
+                    style: {
+                        color: (Highcharts.theme && Highcharts.theme.contrastTextColor) ||
+                            'black'
+                    }
+                }
+            },
+            series: {
+                cursor: 'pointer',
+                point: {
+                    events: {
+                        click: function() {
+                            onClickSeries(this.id, 'daily-table')
+                        }
+                    }
+                }
+            }
+        };
+        var series = [{
+            type: 'pie',
+            name: 'Achievement',
+            data: data.achievements
+        }];
+        var json = {};
+        json.chart = chart;
+        json.title = title;
+        json.tooltip = tooltip;
+        json.series = series;
+        json.plotOptions = plotOptions;
+        $('#daily-pie-chart').highcharts(json);
+    }
+
     // date picker
     var $select = $('.date');
     for (i = 1; i <= 31; i++) {
         $select.append($('<option></option>').val(i).html(i));
     }
 
-
-    // data table
-    const yearTable = $('#year-table')
+    // year data table
+    const yearTable = $('#year-table');
     const yearDataTable = yearTable.DataTable({
         fnInitComplete: function (oSettings, json) {
             const startDate = yearTable.data('start');
@@ -78,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // click impact other charts
     const onClickSeries = (id, type) => {
         var dataSeries;
-        var table = type === 'year-table' ? yearDataTable : false;
+        var table = type === 'year-table' ? yearDataTable : dailyDataTable;
 
         table.data().map((d) => {
             if (d.id === id) dataSeries = d;
@@ -89,14 +265,17 @@ document.addEventListener('DOMContentLoaded', function () {
         table.draw();
 
         if (type === 'year-table') {
-            renderColumnChart([dataSeries]);
-            renderPieChart([dataSeries]);
-            renderAreaChart([dataSeries]);
+            renderYearColumnChart([dataSeries]);
+            renderYearPieChart([dataSeries]);
+            renderYearAreaChart([dataSeries]);
+        } else {
+            renderDailyColumnChart([dataSeries]);
+            renderDailyPieChart([dataSeries]);
         }
     }
 
     // column chart
-    const renderColumnChart = async (d) => {
+    const renderYearColumnChart = async (d) => {
         const data = await getDataFromJson(d);
         var chart = {
             type: 'column'
@@ -164,14 +343,14 @@ document.addEventListener('DOMContentLoaded', function () {
         json.series = series;
         json.plotOptions = plotOptions;
         json.credits = credits;
-        $('#columnChart').highcharts(json);
+        $('#year-column-chart').highcharts(json);
     }
     setTimeout(() => {
-        renderColumnChart(yearDataTable.data());
+        renderYearColumnChart(yearDataTable.data());
     }, 1000)
 
     // pie chart
-    const renderPieChart = async (d) => {
+    const renderYearPieChart = async (d) => {
         const data = await getDataFromJson(d);
         var chart = {
             plotBackgroundColor: null,
@@ -219,14 +398,14 @@ document.addEventListener('DOMContentLoaded', function () {
         json.tooltip = tooltip;
         json.series = series;
         json.plotOptions = plotOptions;
-        $('#pieChart').highcharts(json);
+        $('#year-pie-chart').highcharts(json);
     }
     setTimeout(() => {
-        renderPieChart(yearDataTable.data());
+        renderYearPieChart(yearDataTable.data());
     }, 1000)
 
     // area chart
-    const renderAreaChart = async (d) => {
+    const renderYearAreaChart = async (d) => {
         const data = await getDataFromJson(d);
         var chart = {
             type: 'area'
@@ -288,10 +467,10 @@ document.addEventListener('DOMContentLoaded', function () {
         json.yAxis = yAxis;
         json.series = series;
         json.plotOptions = plotOptions;
-        $('#areaChart').highcharts(json);
+        $('#year-area-chart').highcharts(json);
     }
     setTimeout(() => {
-        renderAreaChart(yearDataTable.data());
+        renderYearAreaChart(yearDataTable.data());
     }, 1000)
 
     // search table impact to chart
@@ -307,9 +486,9 @@ document.addEventListener('DOMContentLoaded', function () {
                 searchData.push(yearDataTable.data()[data])
             ]);
 
-            renderAreaChart(searchData);
-            renderColumnChart(searchData);
-            renderPieChart(searchData);
+            renderYearAreaChart(searchData);
+            renderYearColumnChart(searchData);
+            renderYearPieChart(searchData);
         });
 
         yearDataTable.draw();
