@@ -11,17 +11,17 @@
     <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
     <!-- JS -->
     <link rel="stylesheet" href="/css/style.css">
-    <title>Data Tabel</title>
+    <title>Web Admin</title>
 </head>
 
 <body class="p-2">
     <!-- User profile, Charts, and Daily Summary Table Container -->
     <section class="grid-2 container-fluid">
-        <div class="row row-cols-3">
+        <div class="row">
             <div class="col p-2 bg-secondary">
                 <!-- user profile -->
                 <div class="d-flex">
-                    <img class="me-3" style="width: 150px; height: 150px;" src="/assets/image.jpg" alt="">
+                    <img class="me-3" style="width: 150px; height: 180px;" src="/assets/image.jpg" alt="">
                     <div>
                         <span class="d-block text-white text-uppercase">Danny Suggi Saputra</span>
                         <span class="d-block text-white ">dannysaputra3003@gmail.com</span>
@@ -36,7 +36,7 @@
                         <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Notifications</h5>
                         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
-                    <div class="offcanvas-body" id="notification-content">
+                    <div class="offcanvas-body" id="notification-sidebar-content">
                     </div>
                 </div>
                 <!-- offcanvas inbox -->
@@ -45,7 +45,7 @@
                         <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Inbox</h5>
                         <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
                     </div>
-                    <div class="offcanvas-body" id="inbox-content">
+                    <div class="offcanvas-body" id="inbox-sidebar-content">
                     </div>
                 </div>
                 <!-- modal -->
@@ -92,19 +92,7 @@
                 <div class="border border-3 border-danger p-2">
                     <header class="d-flex justify-content-end">
                         <span class="text-uppercase fw-bold" style="color: brown;">daily summary performance</span>
-                        <!-- TODO: add icon -->
                     </header>
-                    <!-- <form action="index.php" method="POST" class="mb-3">
-                    <div class="form-group me-3 d-inline">
-                        <label for="select">SELECTDATE</label>
-                        <div class="w-100"></div>
-                        <select class="date" name="select" id="select"></select>
-                    </div>
-                    <div class="col">
-                        <button class="btn btn-danger" type="submit">Reload</button>
-                        <input class="btn btn-secondary" id="clear-daily-filter" value="Clear" type="button">
-                    </div>
-                </form> -->
                     <div class="mt-3">
                         <table id="daily-table" class="display" style="width: 100%;">
                             <thead>
@@ -141,7 +129,6 @@
                 </div>
                 <div class="col">
                     <button class="btn btn-danger" type="submit">Reload</button>
-                    <!-- <input class="btn btn-secondary" id="clear-year-filter" value="Clear" type="button"> -->
                 </div>
                 <div class="flex-row">
                     <span class="fw-bold text-uppercase" style="color: brown;">year summary performance</span>
@@ -189,7 +176,7 @@
     </section>
 
     <!-- Notification and Inbox Container -->
-    <section class="container-fluid my-5 p-2">
+    <section class="container-fluid mt-4 mb-2 p-2">
         <div class="row gx-3">
             <!-- notification -->
             <div class="col">
@@ -199,24 +186,24 @@
                 <div class="border border-danger border-3">
                     <header class="d-flex align-items-center justify-content-between">
                         <div class="m-2">
-                            <input class="form-control" type="text" placeholder="Search">
+                            <input class="form-control" id="notif-search-input" type="text" placeholder="Search">
                         </div>
                         <div class="d-flex align-items-center">
                             <div class="me-2 form-check">
-                                <input type="checkbox" class="from-check-input" value="" id="flexCheckDefault">
-                                <label for="flexCheckDefault" class="text-uppercase fw-bold" style="color: red;">Danger</label>
+                                <input type="checkbox" checked class="from-check-input border-danger" value="" id="danger-check">
+                                <label for="flexCheckDefault" class="text-uppercase fw-bold text-danger">Danger</label>
                             </div>
                             <div class="me-2 form-check">
-                                <input type="checkbox" class="from-check-input" value="" id="flexCheckDefault">
-                                <label for="flexCheckDefault" class="text-uppercase fw-bold" style="color: orange;">Warning</label>
+                                <input type="checkbox" checked class="from-check-input border-warning" value="" id="warning-check">
+                                <label for="flexCheckDefault" class="text-uppercase fw-bold text-warning">Warning</label>
                             </div>
                             <div class="me-2 form-check">
-                                <input type="checkbox" class="from-check-input" value="" id="flexCheckDefault">
-                                <label for="flexCheckDefault" class="text-uppercase fw-bold" style="color: green;">Safe</label>
+                                <input type="checkbox" checked class="from-check-input border-success" value="" id="safe-check">
+                                <label for="flexCheckDefault" class="text-uppercase fw-bold text-success">Safe</label>
                             </div>
                         </div>
                     </header>
-                    <div id="notification-content">
+                    <div id="notification-content" style="height: 400px; overflow-y: scroll;">
 
                     </div>
                 </div>
@@ -229,10 +216,10 @@
                 <div class="border border-3 border-danger">
                     <header class="d-flex align-items-center">
                         <div class="m-2">
-                            <input class="form-control" type="text" placeholder="Search">
+                            <input id="inbox-search-input" class="form-control" type="text" placeholder="Search">
                         </div>
                     </header>
-                    <div id="inbox-content">
+                    <div id="inbox-content" style="height: 400px; overflow-y: scroll;">
                     </div>
                 </div>
             </div>
@@ -245,12 +232,12 @@
             <p class="text-uppercase fw-bold text-white">tech mayantara asia</p>
         </div>
         <div class="flex-row me-3">
-            <button class="d-block btn btn-primary rounded-circle" style="height: 50px; width: 50px;">
-                <span id="notification-btn-foot"></span>
+            <button class="d-block btn btn-primary rounded-circle fw-bold" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrollingNotif" aria-controls="offcanvasScrolling" id="notification-btn-foot" style="height: 50px; width: 50px;">
             </button>
         </div>
         <div class="flex-row me-3">
-            <button class="d-block btn btn-success rounded-circle" style="height: 50px; width: 50px;" id="inbox-btn-foot"></button>
+            <button class="d-block btn btn-success rounded-circle fw-bold" type="button" data-bs-toggle="offcanvas" data-bs-target="#offcanvasScrollingInbox" aria-controls="offcanvasScrolling" id="inbox-btn-foot" style="height: 50px; width: 50px;" id="inbox-btn-foot">
+            </button>
         </div>
         <div class="flex-row me-2">
             <div id="date-wrapper" class="text-white fw-bold"></div>
@@ -266,7 +253,10 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.12.1/jquery-ui.min.js"></script>
     <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
-    <script src="js/app.js"></script>
+    <script src="js/modal.js"></script>
+    <script src="js/daily-performance.js"></script>
+    <script src="js/year-performance.js"></script>
+    <script src="js/date-picker.js"></script>
     <script src="js/notification.js"></script>
     <script src="js/inbox.js"></script>
     <script src="js/clock.js"></script>

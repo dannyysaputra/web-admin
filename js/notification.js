@@ -2,7 +2,7 @@ function formatDate(date) {
     const d = new Date(date);
     const dayArray = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
     const monthArray = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli',
-    'Agustus', 'September', 'Oktober', 'November', 'Desember'
+        'Agustus', 'September', 'Oktober', 'November', 'Desember'
     ]
 
     var dd = d.getDate();
@@ -10,18 +10,6 @@ function formatDate(date) {
     var yyyy = d.getFullYear();
 
     return `${dayArray[d.getDay()]}, ${dd} ${monthArray[mm]} ${yyyy}`;
-}
-
-function createNotificationDrawer() {
-    return `<div class="offcanvas offcanvas-start" data-bs-scroll="true" data-bs-backdrop="false" tabindex="-1" id="offcanvasScrolling" aria-labelledby="offcanvasScrollingLabel">
-    <div class="offcanvas-header">
-        <h5 class="offcanvas-title" id="offcanvasScrollingLabel">Colored with scrolling</h5>
-        <button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
-    </div>
-    <div class="offcanvas-body">
-        <p>Try scrolling the rest of the page to see this option in action.</p>
-    </div>
-</div>`
 }
 
 function createNotificationBox(date, status, body) {
@@ -35,33 +23,105 @@ function createNotificationBox(date, status, body) {
         color = 'success';
     }
 
-    return `<div class="d-flex border border-${color} m-2 align-items-center">
-    <div class="ms-4 me-4">
-        <span class="d-block bg-${color} rounded-circle" style="width: 50px; height: 50px;"></span>
-    </div>
-    <div class="align-items-center mt-3">
-        <span class="fw-bold text-${color} text-uppercase">${formatDate(date)}</span>
-        <p>${body}</p>
-    </div>
-</div>`
+    return `
+    <div class="d-flex border border-${color} m-2 align-items-center">
+        <div class="ms-4 me-4">
+            <span class="d-block bg-${color} rounded-circle" style="width: 50px; height: 50px;"></span>
+        </div>
+        <div class="align-items-center mt-3">
+            <span class="fw-bold text-${color} text-uppercase">${formatDate(date)}</span>
+            <p >${body}</p>
+        </div>
+    </div>`
 }
 
 document.addEventListener('DOMContentLoaded', function () {
     const notificationBtn = $('#notification-btn');
-    const notificationBtnFoot = $('#notification-bt-foot');
+    const notificationBtnFoot = $('#notification-btn-foot');
 
-    function renderNotificationBtn (data) {
+    function renderNotificationBtn(data) {
         notificationBtn.text(`${data.length} notifications`)
     }
 
-    function renderNotificationBtnFoot (data) {
+    function renderNotificationBtnFoot(data) {
         notificationBtnFoot.text(`${data.length}`)
     }
 
-    function renderNotificationContent (data) {
+    function renderNotificationContent(data) {
+        console.log(data)
         data.map(d => {
             $('#notification-content').append(createNotificationBox(d.created_at, d.status, d.body))
         });
+    }
+
+    function renderNotificationSidebarContent(data) {
+        data.map(d => {
+            $('#notification-sidebar-content').append(createNotificationBox(d.created_at, d.status, d.body))
+        });
+    }
+
+    function renderCheckboxStatus(data) {
+        const result = [];
+
+        const danger = $('#danger-check')[0].checked;
+        const warning = $('#warning-check')[0].checked;
+        const safe = $('#safe-check')[0].checked;
+        
+        if(danger) {
+            data.map((d) => {
+                if(d.status === 'Danger') {
+                    result.push(d);
+                }
+            })
+        }
+        if(warning) {
+            data.map((d) => {
+                if(d.status === 'Warning') {
+                    result.push(d);
+                }
+            })
+        }
+        if(safe) {
+            data.map((d) => {
+                if(d.status === 'Safe') {
+                    result.push(d);
+                }
+            })
+        }
+
+        setTimeout(() => {
+            $('#notification-content').empty();
+            renderNotificationContent(result);
+        }, 500)
+    }
+
+    function notificationFilter(data) {
+        $('#notif-search-input').on('input', function() {
+            var value = $(this).val().toLowerCase();
+
+            const result = data.filter(d => {
+                return d.body.toLowerCase().includes(value);
+            })
+
+            setTimeout(() => {
+                $('#notification-content').empty();
+                renderNotificationContent(result);
+            }, 500)
+        });
+
+        $('#danger-check').change(function() {
+            renderCheckboxStatus(data);
+        });
+
+        $('#warning-check').change(function() {
+            renderCheckboxStatus(data);
+        });
+
+        $('#safe-check').change(function() {
+            renderCheckboxStatus(data);
+        });
+
+        renderCheckboxStatus(data);
     }
 
     $.ajax('/api/notifications.json', {
@@ -69,7 +129,8 @@ document.addEventListener('DOMContentLoaded', function () {
             renderNotificationBtn(data);
             renderNotificationBtnFoot(data);
             renderNotificationContent(data);
+            renderNotificationSidebarContent(data);
+            notificationFilter(data);
         }
     })
 })
-

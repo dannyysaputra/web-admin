@@ -26,9 +26,14 @@ function createInboxContent(date, body) {
 
 document.addEventListener('DOMContentLoaded', function () {
     const inboxBtn = $('#inbox-btn');
+    const inboxBtnFoot = $('#inbox-btn-foot');
 
     function renderInboxBtn (data) {
         inboxBtn.text(`${data.length} inbox`)
+    }
+
+    function renderInboxBtnFoot (data) {
+        inboxBtnFoot.text(`${data.length}`)
     }
 
     function renderInboxContent (data) {
@@ -37,10 +42,34 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     }
 
+    function renderInboxSidebarContent (data) {
+        data.map(d => {
+            $('#inbox-sidebar-content').append(createInboxContent(d.created_at, d.body))
+        });
+    }
+
+    function inboxFilter(data) {
+        $('#inbox-search-input').on('input', function() {
+            var value = $(this).val().toLowerCase();
+
+            const result = data.filter(d => {
+                return d.body.toLowerCase().includes(value);
+            })
+
+            setTimeout(() => {
+                $('#inbox-content').empty();
+                renderInboxContent(result);
+            }, 500)
+        })
+    }
+
     $.ajax('/api/inbox.json', {
         success: function (data) {
             renderInboxBtn(data);
+            renderInboxBtnFoot(data);
+            renderInboxSidebarContent(data);
             renderInboxContent(data);
+            inboxFilter(data);
         }
     })
 })
